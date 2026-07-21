@@ -1,10 +1,10 @@
-package br.com.joaovictor.desafiopicpay.repositories;
+package com.br.joaovictor.picpaysimplificado.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import br.com.joaovictor.desafiopicpay.infrastructure.entity.Users.User;
+import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.User;
 
 public interface UserRepostory extends JpaRepository<User, Long>{
    Optional<User> findUserByDocument(String document);
