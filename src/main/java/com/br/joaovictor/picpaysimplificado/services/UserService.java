@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.br.joaovictor.picpaysimplificado.dtos.UserDTO;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.User;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.UserType;
 import com.br.joaovictor.picpaysimplificado.repositories.UserRepostory;
@@ -25,6 +26,12 @@ public class UserService {
    
    public User findUserById(Long id) throws Exception{
       return this.userRepository.findUserById(id).orElseThrow(() -> new Exception("Usuario Nao encontrado"));
+   }
+
+   public User createUser(UserDTO data){
+      User newUser = new User(data);
+      this.saveUser(newUser);
+      return newUser;
    }
 
    public void saveUser(User user){
