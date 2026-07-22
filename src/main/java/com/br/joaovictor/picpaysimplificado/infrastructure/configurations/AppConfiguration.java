@@ -1,4 +1,4 @@
-package com.br.joaovictor.picpaysimplificado.infrastructure.Configurations;
+package com.br.joaovictor.picpaysimplificado.infrastructure.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
