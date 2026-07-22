@@ -2,6 +2,8 @@ package com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users;
 
 import java.math.BigDecimal;
 
+import com.br.joaovictor.picpaysimplificado.dtos.UserDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,4 +46,14 @@ public class User {
 
    @Enumerated(EnumType.STRING)
    private UserType userType;
+
+   public User(UserDTO data){
+      this.balance = data.balance();
+      this.document = data.document();
+      this.email = data.email();
+      this.firstName = data.firstName();
+      this.lastName = data.lastName();
+      this.password = data.password();
+      this.userType = data.userType();
+   }
 }
