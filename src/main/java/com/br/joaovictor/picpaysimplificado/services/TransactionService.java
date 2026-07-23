@@ -1,6 +1,5 @@
 package com.br.joaovictor.picpaysimplificado.services;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.br.joaovictor.picpaysimplificado.dtos.TransactionCreatorDTO;
 import com.br.joaovictor.picpaysimplificado.dtos.TransactionDTO;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Transaction.Transaction;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.User;
@@ -32,16 +32,12 @@ public class TransactionService {
 
       userService.validatedTransaction(sender, transactional.value());
 
-      boolean isAuthorized = this.authorizeTransaction();
-      if (!isAuthorized) {
+      if (!this.authorizeTransaction()) {
          throw new Exception("Transação não autorizada");
       }
 
-      Transaction newTransaction = new Transaction();
-      newTransaction.setAmount(transactional.value());
-      newTransaction.setReceiver(receiver);
-      newTransaction.setSender(sender);
-      newTransaction.setTimestamp(LocalDateTime.now());
+      TransactionCreatorDTO transactionCreatorDTO = new TransactionCreatorDTO(transactional.value(), receiver, sender);
+      Transaction newTransaction = new Transaction(transactionCreatorDTO);
 
       sender.setBalance(sender.getBalance().subtract(transactional.value()));
       receiver.setBalance(receiver.getBalance().add(transactional.value()));

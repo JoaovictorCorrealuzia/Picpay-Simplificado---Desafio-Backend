@@ -3,6 +3,7 @@ package com.br.joaovictor.picpaysimplificado.infrastructure.entity.Transaction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.br.joaovictor.picpaysimplificado.dtos.TransactionCreatorDTO;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.User;
 
 import jakarta.persistence.Entity;
@@ -41,4 +42,11 @@ public class Transaction {
    private User receiver;
 
    private LocalDateTime timestamp;
+
+   public Transaction(TransactionCreatorDTO data){
+      this.amount = data.amout();
+      this.receiver = data.receiver();
+      this.sender = data.sender();
+      this.timestamp = LocalDateTime.now();
+   }
 }
