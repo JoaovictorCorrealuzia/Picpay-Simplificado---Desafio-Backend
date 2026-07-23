@@ -22,7 +22,6 @@ public class NotificationService {
             notificationRequest, String.class);
 
       if (!(notificationResponse.getStatusCode() == HttpStatus.OK)) {
-         System.out.println("Sistema de notificação com erro, erro ao enviar");
          throw new Exception("Serviço de notificação fora do ar");
       }
    }

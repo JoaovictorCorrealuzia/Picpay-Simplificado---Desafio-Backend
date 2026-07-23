@@ -1,13 +1,12 @@
 package com.br.joaovictor.picpaysimplificado.services;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.br.joaovictor.picpaysimplificado.dtos.TransactionDTO;
@@ -33,7 +32,7 @@ public class TransactionService {
 
       userService.validatedTransaction(sender, transactional.value());
 
-      boolean isAuthorized = this.authorizeTransaction(sender, transactional.value());
+      boolean isAuthorized = this.authorizeTransaction();
       if (!isAuthorized) {
          throw new Exception("Transação não autorizada");
       }
@@ -51,23 +50,22 @@ public class TransactionService {
       this.userService.saveUser(sender);
       this.userService.saveUser(receiver);
       
-      //Tratar as exeções e depois tratar especificamente essa exeção
+      //A exceção ja é tratada porem para o funcionamento da aplicação estão comentadas esses linhas
       //this.notificationService.sendNotification(receiver, "Transação recebida com sucesso");
       //this.notificationService.sendNotification(sender, "Transação enviada com sucesso");
 
       return newTransaction;
    }
 
-   public boolean authorizeTransaction(User sender, BigDecimal value) {
-      ResponseEntity<Map> authrizationResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize",
-            Map.class);
-      if (authrizationResponse.getStatusCode() == HttpStatus.OK) {
-         Map dataResponse = (Map) authrizationResponse.getBody().get("data");
+   public boolean authorizeTransaction() {
+      try{
+         ResponseEntity<Map> authorizationResponse = restTemplate.getForEntity("https://util.devi.tools/api/v2/authorize", Map.class);
+         
+         Map dataResponse = (Map) authorizationResponse.getBody().get("data");
+         return (boolean) dataResponse.get("authorization");
 
-         boolean authorization = (boolean) dataResponse.get("authorization");
-         return authorization;
-
-      } else
+      }catch (HttpClientErrorException.Forbidden e){
          return false;
+      }
    }
 }
