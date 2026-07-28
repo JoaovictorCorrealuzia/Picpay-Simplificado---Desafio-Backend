@@ -23,8 +23,8 @@ public class TransactionService {
    private TransactionalRepository transactionalRepository;
    @Autowired
    RestTemplate restTemplate;
-   @Autowired
-   NotificationService notificationService;
+   /*@Autowired
+   NotificationService notificationService;*/
 
    public Transaction createTransaction(TransactionDTO transactional) throws Exception {
       User sender = this.userService.findUserById(transactional.senderId());
