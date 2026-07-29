@@ -17,9 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.Apiversion.Use;
-import org.springframework.dao.DataIntegrityViolationException;
-
 import com.br.joaovictor.picpaysimplificado.dtos.UserDTO;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.User;
 import com.br.joaovictor.picpaysimplificado.infrastructure.entity.Users.UserType;
@@ -32,40 +29,35 @@ public class UserServiceTest {
    public UserService userService;
    @Mock
    public UserRepostory userRepostory;
-   User userTest = new User();
    UserDTO userDTO;
 
    @BeforeEach
    void setup() {
       BigDecimal balance = new BigDecimal(1000);
-      userTest.setId(1L);
-      userTest.setBalance(balance);
-      userTest.setUserType(UserType.COMMOM);
-      userTest.setDocument("123456789");
-      userTest.setEmail("emailGenerico@gmail.com");
-      userTest.setFirstName("Usuario");
-      userTest.setLastName("De Tests");
-      userTest.setPassword("12345678");
       // ---------userDTO--------
       userDTO = new UserDTO(
-            "Julio",
-            "Carvalho",
-            "12345f",
-            "emaildojulio@gmail.com",
-            "123456J",
-            new BigDecimal(100L),
-            UserType.COMMOM);
+         "Usuario",
+         "De Tests",
+         "123456789",
+         "emailGenerico@gmail.com",
+         "12345678",
+         balance,
+         UserType.COMMOM);
    }
 
    // -------ValidateTransactionTests--------
    @Test
    void ValidateTransactionSuccessfully() {
+      User userTest = new User(userDTO);
+
       BigDecimal amout = new BigDecimal(500);
       assertDoesNotThrow(() -> userService.validatedTransaction(userTest, amout));
    }
 
    @Test
    void ValidateTransactionWhenBalanceIsInsufficient() {
+      User userTest = new User(userDTO);
+
       BigDecimal amout = new BigDecimal(1500);
       Exception exception = assertThrows(Exception.class,
             () -> userService.validatedTransaction(userTest, amout));
@@ -73,6 +65,8 @@ public class UserServiceTest {
 
    @Test
    void ValidateTransactionWhenUserIsMerchant() {
+      User userTest = new User(userDTO);
+
       BigDecimal amout = new BigDecimal(500);
       userTest.setUserType(UserType.MERCHANT);
       Exception exception = assertThrows(Exception.class,
@@ -82,11 +76,16 @@ public class UserServiceTest {
 
    @Test
    void findUserByIdSuccessfully() throws Exception {
+      User userTest = new User(userDTO);
+      userTest.setId(1L);
+      
       when(userRepostory.findUserById(1L))
             .thenReturn(Optional.of(userTest));
 
       User user = userService.findUserById(1L);
       assertEquals(1L, user.getId());
+
+      verify(userRepostory).findUserById(1L);
    }
 
    @Test
@@ -96,6 +95,9 @@ public class UserServiceTest {
 
       assertThrows(Exception.class,
             () -> userService.findUserById(1L));
+      
+      verify(userRepostory).findUserById(1L);
+
    }
    // -------createUserTests--------
    @Test
